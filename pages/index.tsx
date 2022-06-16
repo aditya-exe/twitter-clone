@@ -1,6 +1,7 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import Sidebar from "../components/sidebar/sidebar.component";
+import Feed from "../components/feed/feed.component";
 
 const Home: NextPage = () => {
   return (
@@ -13,6 +14,7 @@ const Home: NextPage = () => {
 
       <main className={"flex min-h-screen max-w-7xl mx-auto"}>
         <Sidebar />
+        <Feed />
       </main>
     </>
   );
