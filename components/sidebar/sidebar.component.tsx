@@ -16,7 +16,7 @@ import TwitterIcon from "../../public/twitter.svg";
 
 const Sidebar = () => {
   return (
-    <div className={"hidden sm:flex flex-col p-2 xl:items-start fixed h-full"}>
+    <div className={"hidden sm:flex flex-col p-2 xl:items-start fixed h-full xl:ml-24"}>
       <div className={"hoverEffect p-0 hover:bg-blue:100 xl:px-1"}>
         {<Image height={"50"} width={"50"} src={TwitterIcon} />}
       </div>

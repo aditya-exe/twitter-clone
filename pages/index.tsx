@@ -2,8 +2,9 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import Sidebar from "../components/sidebar/sidebar.component";
 import Feed from "../components/feed/feed.component";
+import Widgets from "../components/widgets/widgets.component";
 
-const Home: NextPage = () => {
+const Home: NextPage<any> = ({ newsResults, randomUsers }) => {
   return (
     <>
       <Head>
@@ -12,12 +13,31 @@ const Home: NextPage = () => {
         <link rel={"icon"} href={"/favicon.ico"} />
       </Head>
 
-      <main className={"flex min-h-screen max-w-7xl mx-auto"}>
+      <main className={"flex min-h-screen mx-auto"}>
         <Sidebar />
         <Feed />
+        <Widgets newsResults={newsResults.articles} randomUsers={randomUsers.results} />
       </main>
     </>
   );
 };
 
 export default Home;
+
+export async function getServerSideProps() {
+  const newsAPI = "https://saurav.tech/NewsAPI/top-headlines/category/health/in.json"
+  const usersAPI = "https://randomuser.me/api/?results=300&inc=name,login,picture"
+
+  const newsResults = await fetch(newsAPI)
+    .then(res => res.json())
+
+  const randomUsers = await fetch(usersAPI)
+    .then(res => res.json())
+
+  return {
+    props: {
+      newsResults,
+      randomUsers,
+    }
+  }
+}
