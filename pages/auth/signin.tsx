@@ -9,7 +9,7 @@ const SignIn: React.FC<any> = ({ providers }) => {
           <div className="flex flex-col items-center">
             <img className="w-36 object-cover " src={"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTfK8Srfq7kAN6dM7d_UZkMJxdqJJouhkDZtQ&usqp=CAU"} />
             <p className="text-center text-sm italic my-10">This app is created for educational purposes only</p>
-            <button onClick={()=>signIn(provider.id, {callbackURL: "/"})} className="bg-red-400 rounded-lg p-3 text-white hover:bg-red-500">Sign In with {provider.name}</button>
+            <button onClick={()=>signIn(provider.id, {callbackUrl: "/"})} className="bg-red-400 rounded-lg p-3 text-white hover:bg-red-500">Sign In with {provider.name}</button>
           </div>
         ))}
       </div>
