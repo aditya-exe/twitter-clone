@@ -83,7 +83,7 @@ const Input = () => {
             </div>
             {selectedFile && (
               <div className="relative">
-                <XIcon className="h-5 text-black absolute cursor-pointer shadow-md shadow-white rounded-full" onClick={() => setSelectedFile("")} />
+                <XIcon className="h-5 text-black absolute cursor-pointer shadow-md border border-white m-1 rounded-full" onClick={() => setSelectedFile("")} />
                 <img src={selectedFile} className={`${loading && "animate-pulse"}`} />
               </div>
             )}

@@ -1,28 +1,18 @@
 import { SparklesIcon } from "@heroicons/react/outline";
+import { collection, DocumentData, onSnapshot, orderBy, query, QueryDocumentSnapshot } from "firebase/firestore";
+import { useEffect, useState } from "react";
+import { db } from "../../firebase";
 import Input from "../input/input.component";
 import Post from "../post/post.component";
 
 const Feed = () => {
-  const posts = [
-    {
-      id: "1",
-      name: "Aditya",
-      username: "aditya1",
-      userImg: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.EtEaemD9C_M2GVoWx_X5lgHaHa%26pid%3DApi&f=1",
-      img: "https://preview.redd.it/y2julru7g0871.jpg?width=960&crop=smart&auto=webp&s=c9e31404e555c2f627fada4733924538c6961788",
-      text: "Noice",
-      timestamp: "2 hours ago"
-    },
-    {
-      id: "2",
-      name: "Aditya",
-      username: "aditya1",
-      userImg: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.EtEaemD9C_M2GVoWx_X5lgHaHa%26pid%3DApi&f=1F",
-      img: "https://wallpaperaccess.com/full/3430.jpg",
-      text: "wow",
-      timestamp: "5 hours ago"
-    }
-  ]
+  const [posts, setPosts] = useState<QueryDocumentSnapshot<DocumentData>[] | []>([]);
+  useEffect(() =>
+    onSnapshot(query(collection(db, "posts"), orderBy("timestamp", "desc")),
+      (snapshot) => {
+        setPosts(snapshot.docs)
+      }), [])
+
 
   return (
     <div className="xl:ml-[370px] border-l border-r border-gray-200 xl:min-w-xl sm:ml-[73px] flex-grow max-w-xl">
