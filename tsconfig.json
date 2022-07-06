@@ -15,6 +15,6 @@
     "jsx": "preserve",
     "incremental": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/api/auth/[...nextauth].js", "pages/api/auth/[...nextauth].js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/api/auth/[...nextauth].js", "pages/api/auth/[...nextauth].js", "components/input/input.component.tsx"],
   "exclude": ["node_modules"]
 }

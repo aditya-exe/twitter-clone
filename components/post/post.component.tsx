@@ -1,6 +1,20 @@
-import { ChartBarIcon, ChatIcon, DotsHorizontalIcon, HeartIcon, ShareIcon, TrashIcon } from "@heroicons/react/outline"
+/* eslint-disable jsx-a11y/alt-text */
+/* eslint-disable @next/next/no-img-element */
+import { ChartBarIcon, ChatIcon, DotsHorizontalIcon, HeartIcon, ShareIcon, TrashIcon } from "@heroicons/react/outline";
 
-const Post: React.FC<any> = ({ post }) => {
+interface PostProps {
+  post: {
+    id: string;
+    name: string;
+    username: string;
+    userImg: string;
+    img: string;
+    text: string;
+    timestamp: string;
+  }
+};
+
+const Post: React.FC<PostProps> = ({ post }) => {
   return (
     <div className="flex p-3 cursor-pointer border-b border-gray-200">
       <img src={post.userImg} alt={"user-img"} className="h-11 w-11 rounded-full mr-4" />
@@ -24,9 +38,7 @@ const Post: React.FC<any> = ({ post }) => {
         </div>
       </div>
     </div>
+  );
+};
 
-
-  )
-}
-
-export default Post
+export default Post;

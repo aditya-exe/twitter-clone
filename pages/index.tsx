@@ -4,7 +4,29 @@ import Sidebar from "../components/sidebar/sidebar.component";
 import Feed from "../components/feed/feed.component";
 import Widgets from "../components/widgets/widgets.component";
 
-const Home: NextPage<any> = ({ newsResults, randomUsers }) => {
+interface HomeProps {
+  randomUsers: {
+    results: [{
+      name: {
+        first: string;
+        last: string;
+      },
+      login: {
+        username: string;
+      },
+      picture: {
+        thumbnail: string;
+      }
+    }]
+  },
+  newsResults: {
+    articles: [{
+      title: string
+    }]
+  }
+}
+
+const Home: NextPage<HomeProps> = ({ newsResults, randomUsers }) => {
   return (
     <>
       <Head>
@@ -25,13 +47,13 @@ const Home: NextPage<any> = ({ newsResults, randomUsers }) => {
 export default Home;
 
 export async function getServerSideProps() {
-  const newsAPI = "https://saurav.tech/NewsAPI/top-headlines/category/health/in.json"
-  const usersAPI = "https://randomuser.me/api/?results=300&inc=name,login,picture"
+  const newsAPI: string = "https://saurav.tech/NewsAPI/top-headlines/category/health/in.json";
+  const usersAPI: string = "https://randomuser.me/api/?results=300&inc=name,login,picture";
 
-  const newsResults = await fetch(newsAPI)
+  const newsResults: object = await fetch(newsAPI)
     .then(res => res.json())
 
-  const randomUsers = await fetch(usersAPI)
+  const randomUsers: object = await fetch(usersAPI)
     .then(res => res.json())
 
   return {

@@ -1,8 +1,31 @@
+/* eslint-disable react/no-unescaped-entities */
+/* eslint-disable @next/next/no-img-element */
 import { SearchIcon } from "@heroicons/react/outline"
 import { useState } from "react"
 import News from "../news/news.component"
 
-const Widgets: React.FC<any> = ({ newsResults, randomUsers }) => {
+interface WidgetsProps {
+  newsResults: [
+    articles: {
+      title: string
+    }
+  ]
+  randomUsers: [{
+    name: {
+      first: string;
+      last: string;
+    },
+    login: {
+      username: string;
+    },
+    picture: {
+      thumbnail: string;
+    }
+  }
+  ]
+}
+
+const Widgets: React.FC<WidgetsProps> = ({ newsResults, randomUsers }) => {
   const [articleNum, setArticleNum] = useState(3)
   const [userNum, setUserNum] = useState(3)
 
@@ -27,7 +50,7 @@ const Widgets: React.FC<any> = ({ newsResults, randomUsers }) => {
         <h4 className="font-bold text-xl px-4">Who to follow</h4>
         {randomUsers.slice(0, userNum).map((user: { login: { username: string }; picture: { thumbnail: string }; name: { first: string; last: string } }) => (
           <div key={user.login.username} className="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-200">
-            <img src={user.picture.thumbnail} width="40" className="rounded-full" />
+            <img src={user.picture.thumbnail} width="40" className="rounded-full" alt="user-image" />
             <div className="truncate ml-4 leading-5">
               <h4 className="font-bold hover:underline text-[14px] truncate" >{user.login.username}</h4>
               <h5 className="text-[13px] text-gray-500 truncate">{user.name.first + " " + user.name.last}</h5>
