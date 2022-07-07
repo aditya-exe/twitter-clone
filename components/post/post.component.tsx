@@ -8,6 +8,8 @@ import { db, storage } from "../../firebase";
 import { signIn, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { deleteObject, ref } from "firebase/storage";
+import { useRecoilState } from "recoil";
+import { modalState } from "../../atom/modal.atom";
 
 
 // interface PostProps {
@@ -26,6 +28,7 @@ const Post: React.FC<any> = ({ post }) => {
   const { data: session } = useSession();
   const [likes, setLikes] = useState<any>([]);
   const [hasLiked, setHasLikes] = useState(false);
+  const [open, setOpen] = useRecoilState(modalState)
 
   useEffect(() => {
     const unsubscribe = onSnapshot(
@@ -61,6 +64,8 @@ const Post: React.FC<any> = ({ post }) => {
     }
   }
 
+
+
   return (
     <div className="flex p-3 cursor-pointer border-b border-gray-200">
       <img src={post.data().userImg} alt={"user-img"} className="h-11 w-11 rounded-full mr-4" />
@@ -80,7 +85,7 @@ const Post: React.FC<any> = ({ post }) => {
         <p className="text-gray-800 text-[15px] sm:text-[16px] mb-2 ">{post.data().text}</p>
         <img className="rounded-2xl mr-2" src={post.data().image} />
         <div className="flex justify-between text-gray-500">
-          <ChatIcon className="h-9 w-9 hoverEffect p-2 hover:text-sky-500 hover:bg-sky-100" />
+          <ChatIcon onClick={() => setOpen} className="h-9 w-9 hoverEffect p-2 hover:text-sky-500 hover:bg-sky-100" />
           {session?.user.uid === post?.data().id && (
             <TrashIcon onClick={deletePost} className="h-9 w-9 hoverEffect p-2 hover:text-red-600 hover:bg-red-100" />
           )}

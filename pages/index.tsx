@@ -3,6 +3,7 @@ import Head from "next/head";
 import Sidebar from "../components/sidebar/sidebar.component";
 import Feed from "../components/feed/feed.component";
 import Widgets from "../components/widgets/widgets.component";
+import CommentModal from "../components/comment-modal/comment-modal.component";
 
 interface HomeProps {
   randomUsers: {
@@ -24,7 +25,7 @@ interface HomeProps {
       title: string
     }]
   }
-}
+};
 
 const Home: NextPage<HomeProps> = ({ newsResults, randomUsers }) => {
   return (
@@ -39,6 +40,7 @@ const Home: NextPage<HomeProps> = ({ newsResults, randomUsers }) => {
         <Sidebar />
         <Feed />
         <Widgets newsResults={newsResults.articles} randomUsers={randomUsers.results} />
+        <CommentModal />
       </main>
     </>
   );
@@ -51,15 +53,15 @@ export async function getServerSideProps() {
   const usersAPI: string = "https://randomuser.me/api/?results=300&inc=name,login,picture";
 
   const newsResults: object = await fetch(newsAPI)
-    .then(res => res.json())
+    .then(res => res.json());
 
   const randomUsers: object = await fetch(usersAPI)
-    .then(res => res.json())
+    .then(res => res.json());
 
   return {
     props: {
       newsResults,
       randomUsers,
     }
-  }
-}
+  };
+};
