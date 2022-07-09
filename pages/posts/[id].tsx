@@ -6,9 +6,11 @@ import CommentModal from "../../components/comment-modal/comment-modal.component
 import Post from "../../components/post/post.component";
 import { ArrowLeftIcon } from "@heroicons/react/outline";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { Key, useEffect, useState } from "react";
 import { db } from "../../firebase";
-import { doc, onSnapshot } from "firebase/firestore";
+import { collection, doc, DocumentData, onSnapshot, orderBy, query, QueryDocumentSnapshot, Timestamp } from "firebase/firestore";
+import Comment from "../../components/comment/comment.component";
+import { AnimatePresence, motion } from "framer-motion";
 
 interface PostProps {
   randomUsers: {
@@ -34,10 +36,23 @@ interface PostProps {
 
 const PostPage: NextPage<PostProps> = ({ newsResults, randomUsers }) => {
   const router = useRouter();
-  let { id } = router.query;
+  const { id } = router.query;
   const [post, setPost] = useState<any>();
-  id = id?.toString()
-  useEffect(() => onSnapshot(doc(db, "posts", id), (snapshot) => setPost(snapshot)), [id])
+  const [comments, setComments] = useState<any>([]);
+
+  useEffect(() => {
+    onSnapshot(doc(db, "posts", id), (snapshot) => setPost(snapshot))
+  }, [db, id]);
+
+  useEffect(() => {
+    onSnapshot(
+      query(
+        collection(db, "posts", id, "comments"),
+        orderBy("timestamp", "desc")
+      ),
+      (snapshot) => setComments(snapshot.docs)
+    );
+  }, [db, id]);
 
   return (
     <>
@@ -58,6 +73,17 @@ const PostPage: NextPage<PostProps> = ({ newsResults, randomUsers }) => {
             <h2 className="text-lg sm:text-xl font-bold select-none">Tweet</h2>
           </div>
           <Post id={id} post={post} />
+          {comments.length > 0 && (
+            <div className="">
+              <AnimatePresence>
+                {comments.map((comment: { id:string; data: () => { userImg: string; name: string; timestamp: Timestamp; userId: string; username: string; comment: string; }; }) => (
+                  <motion.div key={comment.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 1 }}>
+                    <Comment key={comment.id} commentId={comment.id} orignalPostId={id} comment={comment.data()}/>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
+          )}
         </div>
 
         <Widgets newsResults={newsResults.articles} randomUsers={randomUsers.results} />

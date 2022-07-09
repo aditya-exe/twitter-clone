@@ -8,6 +8,7 @@ import Post from "../post/post.component";
 
 const Feed = () => {
   const [posts, setPosts] = useState<QueryDocumentSnapshot<DocumentData>[] | []>([]);
+
   useEffect(() =>
     onSnapshot(query(collection(db, "posts"), orderBy("timestamp", "desc")),
       (snapshot) => {

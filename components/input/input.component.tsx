@@ -11,7 +11,7 @@ import { XIcon } from "@heroicons/react/solid";
 const Input = () => {
   const { data: session } = useSession();
   const [input, setInput] = useState<string>("");
-  const [selectedFile, setSelectedFile] = useState<string | null>("");
+  const [selectedFile, setSelectedFile] = useState<any>("");
   const [loading, setLoading] = useState<boolean>(false);
   const filePickerRef = useRef<HTMLInputElement>(null);
 
@@ -22,9 +22,9 @@ const Input = () => {
     setLoading(true);
 
     const docRef = await addDoc(collection(db, "posts"), {
-      id: session?.user.uid,
+      userId: session?.user.uid,
       text: input,
-      userImg: session?.user.image,
+      userImage: session?.user.image,
       timestamp: serverTimestamp(),
       name: session?.user.name,
       username: session?.user.username,
