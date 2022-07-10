@@ -41,17 +41,21 @@ const PostPage: NextPage<PostProps> = ({ newsResults, randomUsers }) => {
   const [comments, setComments] = useState<any>([]);
 
   useEffect(() => {
-    onSnapshot(doc(db, "posts", id), (snapshot) => setPost(snapshot))
+    if (id !== undefined) {
+      onSnapshot(doc(db, "posts", id.toString()), (snapshot) => setPost(snapshot))
+    }
   }, [id]);
 
   useEffect(() => {
-    onSnapshot(
-      query(
-        collection(db, "posts", id, "comments"),
-        orderBy("timestamp", "desc")
-      ),
-      (snapshot) => setComments(snapshot.docs)
-    );
+    if (id !== undefined) {
+      onSnapshot(
+        query(
+          collection(db, "posts", id.toString(), "comments"),
+          orderBy("timestamp", "desc")
+        ),
+        (snapshot) => setComments(snapshot.docs)
+      );
+    }
   }, [id]);
 
   return (
@@ -76,9 +80,9 @@ const PostPage: NextPage<PostProps> = ({ newsResults, randomUsers }) => {
           {comments.length > 0 && (
             <div className="">
               <AnimatePresence>
-                {comments.map((comment: { id:string; data: () => { userImage: string; name: string; timestamp: Timestamp; userId: string; username: string; comment: string; }; }) => (
+                {comments.map((comment: { id: string; data: () => { userImage: string; name: string; timestamp: Timestamp; userId: string; username: string; comment: string; }; }) => (
                   <motion.div key={comment.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 1 }}>
-                    <Comment key={comment.id} commentId={comment.id} orignalPostId={id} comment={comment.data()}/>
+                    <Comment key={comment.id} commentId={comment.id} orignalPostId={id} comment={comment.data()} />
                   </motion.div>
                 ))}
               </AnimatePresence>
