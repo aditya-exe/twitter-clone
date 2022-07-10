@@ -1,15 +1,15 @@
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable @next/next/no-img-element */
-import { EmojiHappyIcon, PhotographIcon } from "@heroicons/react/outline";
-import { useSession, signOut } from "next-auth/react";
-import { useState, useRef } from "react"
-import { db, storage } from "../../firebase"
-import { addDoc, collection, serverTimestamp, updateDoc, doc } from "firebase/firestore";
-import { getDownloadURL, ref, uploadString } from "firebase/storage";
-import { XIcon } from "@heroicons/react/solid";
+import {EmojiHappyIcon, PhotographIcon} from "@heroicons/react/outline";
+import {useSession, signOut} from "next-auth/react";
+import {useState, useRef, ChangeEvent} from "react"
+import {db, storage} from "../../firebase"
+import {addDoc, collection, serverTimestamp, updateDoc, doc} from "firebase/firestore";
+import {getDownloadURL, ref, uploadString} from "firebase/storage";
+import {XIcon} from "@heroicons/react/solid";
 
 const Input = () => {
-  const { data: session } = useSession();
+  const {data: session} = useSession();
   const [input, setInput] = useState<string>("");
   const [selectedFile, setSelectedFile] = useState<any>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -49,10 +49,12 @@ const Input = () => {
     setLoading(false);
   }
 
-  const addImageToPost = (e: any) => {
+  const addImageToPost = (e: ChangeEvent<HTMLInputElement>) => {
     const reader = new FileReader();
-    if (e.target.files[0]) {
-      reader.readAsDataURL(e.target.files[0]);
+    if (e.target.files !== null) {
+      if (e.target.files[0]) {
+        reader.readAsDataURL(e.target.files[0]);
+      }
     }
 
     reader.onload = (readerEvent) => {
@@ -74,7 +76,7 @@ const Input = () => {
             onClick={sO}
             src={session?.user?.image}
             className="h-11 w-11 rounded-full cursor-pointer hover:brightness-95"
-          />
+           alt={"user image"}/>
           <div className="w-full divide-y divide-gray-200 ">
             <div className="">
               <textarea
@@ -87,21 +89,26 @@ const Input = () => {
             </div>
             {selectedFile && (
               <div className="relative">
-                <XIcon className="h-5 text-black absolute cursor-pointer shadow-md border border-white m-1 rounded-full" onClick={() => setSelectedFile("")} />
-                <img src={selectedFile} className={`${loading && "animate-pulse"}`} />
+                <XIcon className="h-5 text-black absolute cursor-pointer shadow-md border border-white m-1 rounded-full"
+                       onClick={() => setSelectedFile("")}/>
+                <img src={selectedFile} className={`${loading && "animate-pulse"}`} alt={"selected file"}/>
               </div>
             )}
             <div className="flex items-center justify-between pt-2.5 ">
               {!loading && (
                 <>
                   <div className="flex">
-                    <div onClick={() => { if (filePickerRef !== null) filePickerRef.current?.click() }}>
-                      <PhotographIcon className="h-10 w-10 hoverEffect p-2 text-sky-500 hover:bg-sky-100" />
-                      <input type="file" hidden ref={filePickerRef} onChange={(e) => addImageToPost(e)} />
+                    <div onClick={() => {
+                      if (filePickerRef !== null) filePickerRef.current?.click()
+                    }}>
+                      <PhotographIcon className="h-10 w-10 hoverEffect p-2 text-sky-500 hover:bg-sky-100"/>
+                      <input type="file" hidden ref={filePickerRef} onChange={(e) => addImageToPost(e)}/>
                     </div>
-                    <EmojiHappyIcon className="h-10 w-10 hoverEffect p-2 text-sky-500 hover:bg-sky-100" />
+                    <EmojiHappyIcon className="h-10 w-10 hoverEffect p-2 text-sky-500 hover:bg-sky-100"/>
                   </div>
-                  <button onClick={sendPost} disabled={!input.trim()} className="bg-blue-400 text-white cursor-pointer px-4 py-1.5 rounded-full font-bold shadow-md hover:brightness-95 disabled:opacity-50">Tweet</button>
+                  <button onClick={sendPost} disabled={!input.trim()}
+                          className="bg-blue-400 text-white cursor-pointer px-4 py-1.5 rounded-full font-bold shadow-md hover:brightness-95 disabled:opacity-50">Tweet
+                  </button>
                 </>
               )}
             </div>
