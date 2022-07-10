@@ -49,7 +49,7 @@ const Input = () => {
     setLoading(false);
   }
 
-  const addImageToPost = (e: { target: { files: Blob[]; }; }) => {
+  const addImageToPost = (e: any) => {
     const reader = new FileReader();
     if (e.target.files[0]) {
       reader.readAsDataURL(e.target.files[0]);
@@ -62,12 +62,16 @@ const Input = () => {
     }
   }
 
+  const sO = () => {
+    signOut();
+  };
+
   return (
     <>
       {session && (
         <div className="flex border-b border-gray-200 p-3 space-x-3">
           <img
-            onClick={signOut}
+            onClick={sO}
             src={session?.user?.image}
             className="h-11 w-11 rounded-full cursor-pointer hover:brightness-95"
           />
@@ -93,7 +97,7 @@ const Input = () => {
                   <div className="flex">
                     <div onClick={() => { if (filePickerRef !== null) filePickerRef.current?.click() }}>
                       <PhotographIcon className="h-10 w-10 hoverEffect p-2 text-sky-500 hover:bg-sky-100" />
-                      <input type="file" hidden ref={filePickerRef} onChange={addImageToPost} />
+                      <input type="file" hidden ref={filePickerRef} onChange={(e) => addImageToPost(e)} />
                     </div>
                     <EmojiHappyIcon className="h-10 w-10 hoverEffect p-2 text-sky-500 hover:bg-sky-100" />
                   </div>

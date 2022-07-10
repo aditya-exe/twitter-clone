@@ -44,7 +44,7 @@ const CommentModal = () => {
   };
 
   return (
-    <div>
+    <div className="focus:ring-0 ring-0">
       {open && (
         <Modal isOpen={open} onRequestClose={() => setOpen(false)} className="max-w-lg w-[90%] absolute top-24 left-[50%] translate-x-[-50%] bg-white border-2 border-gray-200 rounded-xl shadow-md h-[300px] focus:ring-0">
           <div className="p-1">

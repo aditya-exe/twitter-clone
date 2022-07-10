@@ -42,7 +42,7 @@ const PostPage: NextPage<PostProps> = ({ newsResults, randomUsers }) => {
 
   useEffect(() => {
     onSnapshot(doc(db, "posts", id), (snapshot) => setPost(snapshot))
-  }, [db, id]);
+  }, [id]);
 
   useEffect(() => {
     onSnapshot(
@@ -52,7 +52,7 @@ const PostPage: NextPage<PostProps> = ({ newsResults, randomUsers }) => {
       ),
       (snapshot) => setComments(snapshot.docs)
     );
-  }, [db, id]);
+  }, [id]);
 
   return (
     <>
@@ -76,7 +76,7 @@ const PostPage: NextPage<PostProps> = ({ newsResults, randomUsers }) => {
           {comments.length > 0 && (
             <div className="">
               <AnimatePresence>
-                {comments.map((comment: { id:string; data: () => { userImg: string; name: string; timestamp: Timestamp; userId: string; username: string; comment: string; }; }) => (
+                {comments.map((comment: { id:string; data: () => { userImage: string; name: string; timestamp: Timestamp; userId: string; username: string; comment: string; }; }) => (
                   <motion.div key={comment.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 1 }}>
                     <Comment key={comment.id} commentId={comment.id} orignalPostId={id} comment={comment.data()}/>
                   </motion.div>

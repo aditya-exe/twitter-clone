@@ -49,7 +49,7 @@ const Sidebar = () => {
           </button>
 
           <div className={"hoverEffect text-gray-700 flex items-center justify-center xl:justify-start mt-auto"}>
-            <img onClick={signOut} src={data.user.image} alt={"user-image"} className={"h-10 w-10 rounded-full xl:mr-2"}/>
+            <img onClick={()=>signOut()} src={data.user.image} alt={"user-image"} className={"h-10 w-10 rounded-full xl:mr-2"}/>
             <div className="leading-5 hidden xl:inline">
               <h4 className={"font-bold "}>{data.user.name}</h4>
               <p className="text-gray-500">@{data.user.username}</p>
@@ -58,7 +58,7 @@ const Sidebar = () => {
           </div>
         </>
       ) : (
-        <button onClick={signIn} className="bg-blue-400 rounded-full text-white w-36 h-12 font-bold shadow-md hover:brightness-95 text-lg hidden xl:inline">Sign In</button>
+        <button onClick={()=>signIn()} className="bg-blue-400 rounded-full text-white w-36 h-12 font-bold shadow-md hover:brightness-95 text-lg hidden xl:inline">Sign In</button>
       )}
 
     </div>
