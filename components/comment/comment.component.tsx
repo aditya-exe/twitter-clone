@@ -9,7 +9,6 @@ import {
   DocumentData,
   onSnapshot,
   setDoc,
-  Timestamp,
   QueryDocumentSnapshot,
 } from "firebase/firestore";
 import Moment from "react-moment";
@@ -22,16 +21,8 @@ import {useRouter} from "next/router";
 
 interface CommentProps {
   commentId: string;
-  originalPostId: any;
-  comment: {
-    userImage: string;
-    name: string;
-    timestamp: Timestamp;
-    userId: string;
-    username: string;
-    comment: string;
-    image: string;
-  }
+  originalPostId: string | undefined;
+  comment: QueryDocumentSnapshot<DocumentData>;
 }
 
 const Comment: React.FC<CommentProps> = ({commentId, originalPostId, comment}) => {
@@ -40,15 +31,16 @@ const Comment: React.FC<CommentProps> = ({commentId, originalPostId, comment}) =
   const [hasLiked, setHasLikes] = useState<boolean>(false);
   const [open, setOpen] = useRecoilState(modalState);
   const [, setPostId] = useRecoilState(postIdState);
-
-  const router = useRouter();
+  useRouter();
   console.log(commentId);
 
   useEffect(() => {
-    onSnapshot(
-      collection(db, "posts", originalPostId, "comments", commentId, "likes"),
-      (snapshot) => setLikes(snapshot.docs)
-    );
+    if (originalPostId !== undefined) {
+      onSnapshot(
+        collection(db, "posts", originalPostId, "comments", commentId, "likes"),
+        (snapshot) => setLikes(snapshot.docs)
+      );
+    }
   }, [originalPostId, commentId])
 
 
@@ -57,13 +49,15 @@ const Comment: React.FC<CommentProps> = ({commentId, originalPostId, comment}) =
   }, [likes, session?.user.uid])
 
   const likeComment = async () => {
-    if (session) {
-      if (hasLiked) {
-        await deleteDoc(doc(db, "posts", originalPostId, "comments", commentId, "likes", session?.user.uid))
-      } else {
-        await setDoc(doc(db, "posts", originalPostId, "comments", commentId, "likes", session?.user.uid), {
-          username: session?.user.username,
-        })
+    if (originalPostId !== undefined) {
+      if (session) {
+        if (hasLiked) {
+          await deleteDoc(doc(db, "posts", originalPostId, "comments", commentId, "likes", session?.user.uid))
+        } else {
+          await setDoc(doc(db, "posts", originalPostId, "comments", commentId, "likes", session?.user.uid), {
+            username: session?.user.username,
+          })
+        }
       }
     } else {
       await signIn();
@@ -71,44 +65,48 @@ const Comment: React.FC<CommentProps> = ({commentId, originalPostId, comment}) =
   }
 
   const deleteComment = async () => {
-    if (window.confirm("Are you sure you want to delete this comment?")) {
-      await deleteDoc(doc(db, "posts", originalPostId, "comments", commentId));
+    if (originalPostId !== undefined) {
+      if (window.confirm("Are you sure you want to delete this comment?")) {
+        await deleteDoc(doc(db, "posts", originalPostId, "comments", commentId));
+      }
     }
   }
 
   return (
     <div className="flex p-3 cursor-pointer border-b border-gray-200 pl-20">
-      <img src={comment?.userImage} alt={"user-img"} className="h-11 w-11 rounded-full mr-4"/>
+      <img src={comment?.data()?.userImage} alt={"user-img"} className="h-11 w-11 rounded-full mr-4"/>
       <div className="flex-1">
         <div className="flex items-center justify-between ">
           <div className="flex space-x-1 whitespace-nowrap items-center">
-            <h4 className="font-bold text-[15px] sm:text-[16px] hover:underline">{comment?.name}</h4>
-            <span className="text-sm sm:text-[15px]">@{comment?.username} - </span>
+            <h4 className="font-bold text-[15px] sm:text-[16px] hover:underline">{comment?.data()?.name}</h4>
+            <span className="text-sm sm:text-[15px]">@{comment?.data()?.username} - </span>
             <span className="text-sm sm:text-[15px] hover:underline">
               <Moment fromNow>
-                {comment?.timestamp?.toDate()}
+                {comment?.data()?.timestamp?.toDate()}
               </Moment>
             </span>
           </div>
           <DotsHorizontalIcon className="h-10 hoverEffect w-10 hover:bg-sky-100 hover:text-sky-500 p-2"/>
         </div>
-        <p className="text-gray-800 text-[15px] sm:text-[16px] mb-2 ">{comment?.comment}</p>
-        {comment.image && (
-          <img className={"rounded-2xl mr-2"} src={comment.image} alt={"comment image"}/>
+        <p className="text-gray-800 text-[15px] sm:text-[16px] mb-2 ">{comment?.data()?.comment}</p>
+        {comment?.data()?.image && (
+          <img className={"rounded-2xl mr-2"} src={comment?.data()?.image} alt={"comment image"}/>
         )}
         <div className="flex justify-between text-gray-500">
           <div className="flex items-center select-none">
-            <ChatIcon onClick={() => {
-              if (!session) {
-                signIn();
-              } else {
-                setPostId(originalPostId);
-                setOpen(!open);
-              }
-            }}
-                      className="h-9 w-9 hoverEffect p-2 hover:text-sky-500 hover:bg-sky-100"/>
+            {originalPostId !== undefined && (
+              <ChatIcon onClick={() => {
+                if (!session) {
+                  signIn();
+                } else {
+                  setPostId(originalPostId);
+                  setOpen(!open);
+                }
+              }}
+                        className="h-9 w-9 hoverEffect p-2 hover:text-sky-500 hover:bg-sky-100"/>
+            )}
           </div>
-          {session?.user.uid === comment.userId && (
+          {session?.user.uid === comment?.data()?.userId && (
             <TrashIcon onClick={deleteComment} className="h-9 w-9 hoverEffect p-2 hover:text-red-600 hover:bg-red-100"/>
           )}
           <div className="flex items-center">

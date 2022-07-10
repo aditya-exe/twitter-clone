@@ -6,7 +6,7 @@ import {
   collection,
   deleteDoc,
   doc,
-  DocumentData,
+  DocumentData, DocumentSnapshot,
   onSnapshot,
   QueryDocumentSnapshot,
   setDoc,
@@ -21,7 +21,7 @@ import {modalState, postIdState} from "../../atom/modal.atom";
 import {useRouter} from "next/router";
 
 interface PostProps {
-  post: QueryDocumentSnapshot<DocumentData>
+  post: QueryDocumentSnapshot<DocumentData> | DocumentSnapshot<DocumentData>
   id: string
 }
 
@@ -33,6 +33,7 @@ const Post: React.FC<PostProps> = ({post, id}) => {
   const [open, setOpen] = useRecoilState(modalState);
   const [, setPostId] = useRecoilState(postIdState);
   const router = useRouter();
+
 
   useEffect(() => {
     onSnapshot(
@@ -52,6 +53,8 @@ const Post: React.FC<PostProps> = ({post, id}) => {
     setHasLikes(likes.findIndex((like: { id: string | undefined; }) => like.id === session?.user.uid) !== -1)
   }, [likes, session?.user.uid])
 
+  // if (post === undefined) return;
+
   const likePost = async () => {
     if (session) {
       if (hasLiked) {
@@ -69,12 +72,15 @@ const Post: React.FC<PostProps> = ({post, id}) => {
   const deletePost = async () => {
     if (window.confirm("Are you sure you want to delete this post?")) {
       await deleteDoc(doc(db, "posts", id));
-      if (post.data().image) {
+
+      if (post?.data()?.image) {
         await deleteObject(ref(storage, `posts/${id}/image`));
       }
+
       await router.push("/");
     }
   }
+
 
   return (
     <div className="flex p-3 cursor-pointer border-b border-gray-200">
@@ -82,20 +88,20 @@ const Post: React.FC<PostProps> = ({post, id}) => {
       <div className="flex-1">
         <div className="flex items-center justify-between ">
           <div className="flex space-x-1 whitespace-nowrap items-center">
-            <h4 className="font-bold text-[15px] sm:text-[16px] hover:underline">{post?.data().name}</h4>
-            <span className="text-sm sm:text-[15px]">@{post?.data().username} - </span>
+            <h4 className="font-bold text-[15px] sm:text-[16px] hover:underline">{post?.data()?.name}</h4>
+            <span className="text-sm sm:text-[15px]">@{post?.data()?.username} - </span>
             <span className="text-sm sm:text-[15px] hover:underline">
               <Moment fromNow>
-                {post?.data().timestamp?.toDate()}
+                {post?.data()?.timestamp?.toDate()}
               </Moment>
             </span>
           </div>
           <DotsHorizontalIcon className="h-10 hoverEffect w-10 hover:bg-sky-100 hover:text-sky-500 p-2"/>
         </div>
         <p onClick={() => router.push(`/posts/${id}`)}
-           className="text-gray-800 text-[15px] sm:text-[16px] mb-2 ">{post?.data().text}</p>
-        {post.data().image && (
-          <img onClick={() => router.push(`posts/${id}`)} className="rounded-2xl mr-2" src={post?.data().image}
+           className="text-gray-800 text-[15px] sm:text-[16px] mb-2 ">{post?.data()?.text}</p>
+        {post?.data()?.image && (
+          <img onClick={() => router.push(`posts/${id}`)} className="rounded-2xl mr-2" src={post?.data()?.image}
                alt={"post image"}/>
         )}
         <div className="flex justify-between text-gray-500">
@@ -107,15 +113,14 @@ const Post: React.FC<PostProps> = ({post, id}) => {
                 setPostId(id);
                 setOpen(!open);
               }
-            }}
-                      className="h-9 w-9 hoverEffect p-2 hover:text-sky-500 hover:bg-sky-100"/>
+            }} className="h-9 w-9 hoverEffect p-2 hover:text-sky-500 hover:bg-sky-100"/>
             {comments.length > 0 && (
               <span className="text-sm">
                 {comments.length}
               </span>
             )}
           </div>
-          {session?.user.uid === post?.data().userId && (
+          {session?.user.uid === post?.data()?.userId && (
             <TrashIcon onClick={deletePost} className="h-9 w-9 hoverEffect p-2 hover:text-red-600 hover:bg-red-100"/>
           )}
           <div className="flex items-center">
